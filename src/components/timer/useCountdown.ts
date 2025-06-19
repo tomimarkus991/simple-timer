@@ -67,8 +67,13 @@ export const useCountdown = (props: Props) => {
   } = props;
 
   const remainingTimeRef = useRef<number>();
+  const [elapsedTime, setElapsedTime] = useState(0);
   const maxStrokeWidth = Math.max(strokeWidth, trailStrokeWidth ?? 0);
   const { path, pathLength } = getPathProps(size, maxStrokeWidth, rotation);
+
+  useEffect(() => {
+    setElapsedTime(0);
+  }, [key]);
 
   const { elapsedTime: newElapsedTime } = useElapsedTime({
     isPlaying,
@@ -101,25 +106,7 @@ export const useCountdown = (props: Props) => {
         : undefined,
   });
 
-  if (!duration) {
-    return {
-      elapsedTime: 0,
-      path,
-      pathLength,
-      remainingTime: 0,
-      rotation,
-      size,
-      stroke: getStroke(props, 0),
-      strokeDashoffset: linearEase(0, 0, pathLength, duration),
-      strokeWidth,
-    };
-  }
-
-  console.log("ddd", duration);
-
   const remainingTimeRow = duration - newElapsedTime;
-
-  console.log(newElapsedTime);
 
   return {
     elapsedTime: newElapsedTime,

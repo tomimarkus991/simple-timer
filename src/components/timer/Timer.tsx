@@ -7,7 +7,7 @@ import { getWrapperStyle, timeStyle } from "./utils";
 import type { Props } from "./types";
 
 export const Timer = (props: Props) => {
-  const { children, duration, strokeLinecap, trailColor, trailStrokeWidth } = props;
+  const { children, duration, strokeLinecap, trailColor, trailStrokeWidth, key } = props;
   const {
     path,
     pathLength,

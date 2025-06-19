@@ -38,29 +38,7 @@ export default function TabOneScreen() {
     }
   }, []);
 
-  const { width } = Dimensions.get("window");
   const pad = (n: number) => n.toString().padStart(2, "0");
-
-  const {
-    path,
-    pathLength,
-    stroke,
-    strokeDashoffset,
-    remainingTime,
-    elapsedTime,
-    size,
-    strokeWidth,
-  } = useCountdown({
-    key: restartkey,
-    isPlaying,
-    duration: userSetDuration,
-    colors: ["#2A2B88", "#F7B801", "#A30000", "#A30000"],
-    colorsTime: dynamicColors,
-    size: width - 20,
-    strokeWidth: 30,
-    trailColor: "#151D64",
-    strokeLinecap: "butt",
-  });
 
   // 300 sek  70% lilla 20% kollane 8% punane
   //          210 sek   60          24
@@ -73,101 +51,105 @@ export default function TabOneScreen() {
     setDynamicColors([mainColor, secondColor, lastColor, 0]);
   }, [userSetDuration]);
 
-  useEffect(() => {
+  const renderTime = ({ remainingTime }: any) => {
     if (remainingTime === 4) {
       player.play();
     }
-  }, [remainingTime]);
+
+    return (
+      <View style={timeStyle as StyleProp<ViewStyle>}>
+        {isPlaying ? (
+          <View className="flex-row items-center justify-center flex-1 overflow-hidden">
+            <Animated.View
+              key={`${Math.floor(remainingTime / 60)}`}
+              entering={FadeInDown.duration(300)}
+              exiting={FadeOutUp.duration(300)}
+              layout={LinearTransition.springify()}
+            >
+              <Text className="w-32 text-center text-white text-7xl">
+                {pad(Math.floor(remainingTime / 60))}
+              </Text>
+            </Animated.View>
+            <Entypo className="-mx-2" name="dots-two-vertical" size={34} color="white" />
+            <Animated.View
+              key={`${Math.floor(remainingTime / 60)} + ${remainingTime % 60}`}
+              entering={FadeInDown.duration(300)}
+              exiting={FadeOutUp.duration(300)}
+              layout={LinearTransition.springify()}
+            >
+              <Text className="w-32 text-center text-white text-7xl">
+                {pad(remainingTime % 60)}
+              </Text>
+            </Animated.View>
+          </View>
+        ) : (
+          <Animated.View
+            key="timepicker"
+            entering={FadeInDown.duration(300)}
+            exiting={FadeOutUp.duration(300)}
+            layout={LinearTransition.springify()}
+          >
+            <TimerPicker
+              onDurationChange={({ minutes, seconds }) => {
+                console.log(minutes, " : ", seconds);
+                setTimerDuration(minutes * 60 + seconds);
+              }}
+              hideHours
+              secondInterval={5}
+              decelerationRate={0}
+              minuteLabel={<P className="pl-2 text-2xl font-bold text-center">m</P>}
+              secondLabel={<P className="text-2xl font-bold text-center">s</P>}
+              maximumMinutes={10}
+              maximumSeconds={55}
+              pickerFeedback={pickerFeedback}
+              LinearGradient={LinearGradient}
+              MaskedView={MaskedView}
+              styles={{
+                theme: "dark",
+                backgroundColor: "transparent", // transparent fade-out
+                pickerItem: {
+                  fontSize: 42,
+                },
+                pickerContainer: {
+                  marginRight: 6,
+                },
+                pickerItemContainer: {
+                  width: 110,
+                },
+                pickerLabelContainer: {
+                  right: -4,
+                  top: 30,
+                  bottom: 6,
+                  width: 40,
+                  alignItems: "center",
+                },
+              }}
+            />
+          </Animated.View>
+        )}
+      </View>
+    );
+  };
+
+  const { width } = Dimensions.get("screen");
 
   return (
     <SafeAreaProvider>
       <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
         <View className="items-center justify-center flex-1">
-          <View style={getWrapperStyle(size) as StyleProp<ViewStyle>}>
-            <Svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
-              <Path d={path} fill="none" stroke={"#151D64"} strokeWidth={strokeWidth} />
-              <Path
-                d={path}
-                fill="none"
-                stroke={stroke}
-                strokeLinecap="butt"
-                strokeWidth={strokeWidth}
-                strokeDasharray={pathLength}
-                strokeDashoffset={strokeDashoffset}
-              />
-            </Svg>
-            <View style={timeStyle as StyleProp<ViewStyle>}>
-              {isPlaying ? (
-                <View className="flex-row items-center justify-center flex-1 overflow-hidden">
-                  <Animated.View
-                    key={`${Math.floor(remainingTime / 60)}`}
-                    entering={FadeInDown.duration(300)}
-                    exiting={FadeOutUp.duration(300)}
-                    layout={LinearTransition.springify()}
-                  >
-                    <Text className="w-32 text-center text-white text-7xl">
-                      {pad(Math.floor(remainingTime / 60))}
-                    </Text>
-                  </Animated.View>
-                  <Entypo className="-mx-2" name="dots-two-vertical" size={34} color="white" />
-                  <Animated.View
-                    key={`${Math.floor(remainingTime / 60)} + ${remainingTime % 60}`}
-                    entering={FadeInDown.duration(300)}
-                    exiting={FadeOutUp.duration(300)}
-                    layout={LinearTransition.springify()}
-                  >
-                    <Text className="w-32 text-center text-white text-7xl">
-                      {pad(remainingTime % 60)}
-                    </Text>
-                  </Animated.View>
-                </View>
-              ) : (
-                <Animated.View
-                  key="timepicker"
-                  entering={FadeInDown.duration(300)}
-                  exiting={FadeOutUp.duration(300)}
-                  layout={LinearTransition.springify()}
-                >
-                  <TimerPicker
-                    onDurationChange={({ minutes, seconds }) => {
-                      console.log(minutes, " : ", seconds);
-                      setTimerDuration(minutes * 60 + seconds);
-                    }}
-                    hideHours
-                    secondInterval={5}
-                    decelerationRate={0}
-                    minuteLabel={<P className="pl-2 text-2xl font-bold text-center">m</P>}
-                    secondLabel={<P className="text-2xl font-bold text-center">s</P>}
-                    maximumMinutes={10}
-                    maximumSeconds={55}
-                    pickerFeedback={pickerFeedback}
-                    LinearGradient={LinearGradient}
-                    MaskedView={MaskedView}
-                    styles={{
-                      theme: "dark",
-                      backgroundColor: "transparent", // transparent fade-out
-                      pickerItem: {
-                        fontSize: 42,
-                      },
-                      pickerContainer: {
-                        marginRight: 6,
-                      },
-                      pickerItemContainer: {
-                        width: 110,
-                      },
-                      pickerLabelContainer: {
-                        right: -4,
-                        top: 30,
-                        bottom: 6,
-                        width: 40,
-                        alignItems: "center",
-                      },
-                    }}
-                  />
-                </Animated.View>
-              )}
-            </View>
-          </View>
+          <Timer
+            key={restartkey}
+            isPlaying
+            duration={userSetDuration}
+            colors={["#2A2B88", "#F7B801", "#A30000", "#A30000"]}
+            colorsTime={dynamicColors}
+            size={width - 20}
+            strokeWidth={30}
+            trailColor={"#151D64"}
+            strokeLinecap={"butt"}
+          >
+            {renderTime}
+          </Timer>
 
           <Pressable
             className={clsx(
