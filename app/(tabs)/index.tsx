@@ -27,7 +27,7 @@ export default function TabOneScreen() {
     0, 0, 0, 0,
   ]);
 
-  const [restartkey, setRestartKey] = useState(Math.random());
+  const [restartKey, setRestartKey] = useState(Math.random());
   const player = useAudioPlayer(audioSource);
 
   const pickerFeedback = useCallback(() => {
@@ -138,7 +138,7 @@ export default function TabOneScreen() {
       <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
         <View className="items-center justify-center flex-1">
           <Timer
-            key={restartkey}
+            key={restartKey}
             isPlaying
             duration={userSetDuration}
             colors={["#2A2B88", "#F7B801", "#A30000", "#A30000"]}
@@ -147,6 +147,7 @@ export default function TabOneScreen() {
             strokeWidth={30}
             trailColor={"#151D64"}
             strokeLinecap={"butt"}
+            isSmoothColorTransition={false}
           >
             {renderTime}
           </Timer>

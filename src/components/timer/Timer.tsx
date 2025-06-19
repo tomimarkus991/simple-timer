@@ -7,7 +7,7 @@ import { getWrapperStyle, timeStyle } from "./utils";
 import type { Props } from "./types";
 
 export const Timer = (props: Props) => {
-  const { children, duration, strokeLinecap, trailColor, trailStrokeWidth, key } = props;
+  const { children, duration, strokeLinecap, trailColor, trailStrokeWidth } = props;
   const {
     path,
     pathLength,
@@ -28,17 +28,15 @@ export const Timer = (props: Props) => {
           stroke={trailColor ?? "#d9d9d9"}
           strokeWidth={trailStrokeWidth ?? strokeWidth}
         />
-        {elapsedTime !== duration && (
-          <Path
-            d={path}
-            fill="none"
-            stroke={stroke}
-            strokeLinecap={strokeLinecap ?? "round"}
-            strokeWidth={strokeWidth}
-            strokeDasharray={pathLength}
-            strokeDashoffset={strokeDashoffset}
-          />
-        )}
+        <Path
+          d={path}
+          fill="none"
+          stroke={stroke}
+          strokeLinecap={strokeLinecap ?? "round"}
+          strokeWidth={strokeWidth}
+          strokeDasharray={pathLength}
+          strokeDashoffset={strokeDashoffset}
+        />
       </Svg>
       {typeof children === "function" && (
         <View style={timeStyle as StyleProp<ViewStyle>}>
