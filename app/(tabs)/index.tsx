@@ -91,7 +91,6 @@ export default function TabOneScreen() {
           >
             <TimerPicker
               onDurationChange={({ minutes, seconds }) => {
-                console.log(minutes, " : ", seconds);
                 setTimerDuration(minutes * 60 + seconds);
               }}
               hideHours
@@ -166,8 +165,6 @@ export default function TabOneScreen() {
             )}
             disabled={timerDuration ? false : true}
             onPress={() => {
-              console.log(isPlaying);
-
               if (!isPlaying) {
                 setUserSetDuration(timerDuration);
               } else {
