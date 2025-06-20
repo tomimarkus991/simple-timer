@@ -97,6 +97,7 @@ export default function TabOneScreen() {
               hideHours
               secondInterval={5}
               decelerationRate={0}
+              initialValue={{ minutes: 3 }}
               minuteLabel={<P className="pl-2 text-2xl font-bold text-center">m</P>}
               secondLabel={<P className="text-2xl font-bold text-center">s</P>}
               maximumMinutes={10}
