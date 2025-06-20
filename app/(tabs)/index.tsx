@@ -95,13 +95,13 @@ export default function TabOneScreen() {
                 setTimerDuration(minutes * 60 + seconds);
               }}
               hideHours
-              secondInterval={5}
+              secondInterval={10}
               decelerationRate={0}
               initialValue={{ minutes: 3 }}
               minuteLabel={<P className="pl-2 text-2xl font-bold text-center">m</P>}
               secondLabel={<P className="text-2xl font-bold text-center">s</P>}
               maximumMinutes={10}
-              maximumSeconds={55}
+              maximumSeconds={50}
               pickerFeedback={pickerFeedback}
               LinearGradient={LinearGradient}
               MaskedView={MaskedView}
