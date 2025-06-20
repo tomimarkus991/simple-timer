@@ -2,7 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaskedView from "@react-native-masked-view/masked-view";
 import clsx from "clsx";
-import { useAudioPlayer } from "expo-audio";
+import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -60,6 +60,12 @@ export default function TabOneScreen() {
     console.log(remainingTime);
 
     if (remainingTime === 4) {
+      setAudioModeAsync({
+        shouldPlayInBackground: true,
+        shouldRouteThroughEarpiece: true,
+        interruptionMode: "mixWithOthers",
+      });
+
       endingPlayer.seekTo(0);
       endingPlayer.play();
     }
