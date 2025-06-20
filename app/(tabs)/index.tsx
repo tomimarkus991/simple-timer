@@ -20,6 +20,13 @@ import Toast from "react-native-toast-message";
 const ending = require("../../assets/sounds/ending4s.mp3");
 const start = require("../../assets/sounds/start.mp3");
 
+setAudioModeAsync({
+  shouldPlayInBackground: true,
+  shouldRouteThroughEarpiece: true,
+  interruptionMode: "mixWithOthers",
+  interruptionModeAndroid: "duckOthers",
+});
+
 export default function TabOneScreen() {
   const { width } = Dimensions.get("screen");
 
@@ -60,12 +67,6 @@ export default function TabOneScreen() {
     console.log(remainingTime);
 
     if (remainingTime === 4) {
-      setAudioModeAsync({
-        shouldPlayInBackground: true,
-        shouldRouteThroughEarpiece: true,
-        interruptionMode: "mixWithOthers",
-      });
-
       endingPlayer.seekTo(0);
       endingPlayer.play();
     }

@@ -65,6 +65,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#151514",
     },
     package: appConfig.package,
+    edgeToEdgeEnabled: true,
   },
   plugins: [
     "expo-router",

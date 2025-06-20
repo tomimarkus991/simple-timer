@@ -1,5 +1,7 @@
 /// <reference types="react" />
 
+import { JSX } from "react";
+
 type ColorHex = `#${string}`;
 type ColorRGBA = `rgba(${string})`;
 type ColorURL = `url(#${string})`;
