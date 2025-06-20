@@ -27,6 +27,7 @@ export default function TabOneScreen() {
   const [userSetDuration, setUserSetDuration] = useState(0);
   const [isCountdownEnabled, setIsCountdownEnabled] = useState(false);
   const [startInitialCountdown, setStartInitialCountdown] = useState(false);
+  const [isLoopingEnabled, setIsLoopingEnabled] = useState(false);
   const [dynamicColors, setDynamicColors] = useState<[number, number, number, number]>([
     0, 0, 0, 0,
   ]);
@@ -55,11 +56,12 @@ export default function TabOneScreen() {
   }, [userSetDuration]);
 
   const renderTime = ({ remainingTime }: any) => {
+    console.log(remainingTime);
+
     if (remainingTime === 4) {
+      endingPlayer.seekTo(0);
       endingPlayer.play();
     }
-
-    console.log(lastUserSetDurationSecondsRef.current);
 
     return (
       <View style={timeStyle as StyleProp<ViewStyle>}>
@@ -130,18 +132,30 @@ export default function TabOneScreen() {
   return (
     <SafeAreaProvider>
       <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-        <Pressable
-          className="items-end justify-end mt-5 mr-4"
-          onPress={() => {
-            setIsCountdownEnabled(_prev => !_prev);
-          }}
-        >
-          {isCountdownEnabled ? (
-            <MaterialCommunityIcons name="timer" size={42} color="white" />
-          ) : (
-            <MaterialCommunityIcons name="timer-off" size={42} color="white" />
-          )}
-        </Pressable>
+        <View className="flex-row items-end justify-between mt-5 mx-7">
+          <Pressable
+            onPress={() => {
+              setIsLoopingEnabled(_prev => !_prev);
+            }}
+          >
+            {isLoopingEnabled ? (
+              <MaterialCommunityIcons name="repeat" size={42} color="white" />
+            ) : (
+              <MaterialCommunityIcons name="repeat-off" size={42} color="white" />
+            )}
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              setIsCountdownEnabled(_prev => !_prev);
+            }}
+          >
+            {isCountdownEnabled ? (
+              <MaterialCommunityIcons name="timer" size={42} color="white" />
+            ) : (
+              <MaterialCommunityIcons name="timer-off" size={42} color="white" />
+            )}
+          </Pressable>
+        </View>
 
         <View className="items-center justify-center flex-1 -mt-5">
           <Timer
@@ -155,6 +169,17 @@ export default function TabOneScreen() {
             trailColor={"#151D64"}
             strokeLinecap={"butt"}
             isSmoothColorTransition={false}
+            updateInterval={1}
+            onComplete={() => {
+              if (isLoopingEnabled) {
+                setRestartKey(Math.random());
+                return { shouldRepeat: true };
+              } else {
+                setRestartKey(Math.random());
+                setUserSetDuration(0);
+                setIsPlaying(false);
+              }
+            }}
           >
             {renderTime}
           </Timer>
@@ -189,6 +214,7 @@ export default function TabOneScreen() {
                     setIsPlaying(true);
                   }, 4000);
                   setTimeout(() => {
+                    startPlayer.seekTo(0);
                     startPlayer.play();
                   }, 3300);
                 } else {
