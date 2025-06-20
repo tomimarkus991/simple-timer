@@ -27,7 +27,6 @@ export default function TabOneScreen() {
   const [userSetDuration, setUserSetDuration] = useState(0);
   const [isCountdownEnabled, setIsCountdownEnabled] = useState(false);
   const [startInitialCountdown, setStartInitialCountdown] = useState(false);
-  const [isStartCountdownFinished, setIsStartCountdownFinished] = useState(false);
   const [dynamicColors, setDynamicColors] = useState<[number, number, number, number]>([
     0, 0, 0, 0,
   ]);
@@ -68,7 +67,6 @@ export default function TabOneScreen() {
           <InitialCountdown
             onCountdownFinish={() => {
               setStartInitialCountdown(false);
-              setIsStartCountdownFinished(true);
               setIsPlaying(true);
             }}
           />
