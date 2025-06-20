@@ -7,6 +7,7 @@ import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-rean
 import "react-native-reanimated";
 import "../global.css";
 import Toast, { BaseToast } from "react-native-toast-message";
+import { setAudioModeAsync } from "expo-audio";
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -46,6 +47,13 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
+
+      setAudioModeAsync({
+        shouldPlayInBackground: true,
+        shouldRouteThroughEarpiece: true,
+        interruptionMode: "mixWithOthers",
+        interruptionModeAndroid: "duckOthers",
+      });
     }
   }, [loaded]);
 
