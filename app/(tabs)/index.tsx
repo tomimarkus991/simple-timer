@@ -1,4 +1,3 @@
-import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaskedView from "@react-native-masked-view/masked-view";
@@ -7,28 +6,35 @@ import { useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useState } from "react";
-import { Dimensions, Pressable, StyleProp, Text, View, ViewStyle } from "react-native";
+import { Dimensions, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import Animated, { FadeInDown, FadeOutUp, LinearTransition } from "react-native-reanimated";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { TimerPicker } from "react-native-timer-picker";
+import { Countdown } from "../../src/components/Countdown";
+import { InitialCountdown } from "../../src/components/InitialCountdown";
 import { P } from "../../src/components/P";
 import { Timer } from "../../src/components/timer/Timer";
-import { useCountdown } from "../../src/components/timer/useCountdown";
-import Svg, { Path } from "react-native-svg";
-import { getWrapperStyle, timeStyle } from "../../src/components/timer/utils";
+import { timeStyle } from "../../src/components/timer/utils";
 
-const audioSource = require("../../assets/sounds/ending4s.mp3");
+const ending = require("../../assets/sounds/ending4s.mp3");
+const start = require("../../assets/sounds/start.mp3");
 
 export default function TabOneScreen() {
+  const { width } = Dimensions.get("screen");
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [timerDuration, setTimerDuration] = useState(0);
   const [userSetDuration, setUserSetDuration] = useState(0);
+  const [isCountdownEnabled, setIsCountdownEnabled] = useState(false);
+  const [startInitialCountdown, setStartInitialCountdown] = useState(false);
+  const [isStartCountdownFinished, setIsStartCountdownFinished] = useState(false);
   const [dynamicColors, setDynamicColors] = useState<[number, number, number, number]>([
     0, 0, 0, 0,
   ]);
 
   const [restartKey, setRestartKey] = useState(Math.random());
-  const player = useAudioPlayer(audioSource);
+  const endingPlayer = useAudioPlayer(ending);
+  const startPlayer = useAudioPlayer(start);
 
   const pickerFeedback = useCallback(() => {
     try {
@@ -37,11 +43,6 @@ export default function TabOneScreen() {
       console.warn("Picker feedback failed");
     }
   }, []);
-
-  const pad = (n: number) => n.toString().padStart(2, "0");
-
-  // 300 sek  70% lilla 20% kollane 8% punane
-  //          210 sek   60          24
 
   useEffect(() => {
     const mainColor = userSetDuration * 0.7;
@@ -53,35 +54,21 @@ export default function TabOneScreen() {
 
   const renderTime = ({ remainingTime }: any) => {
     if (remainingTime === 4) {
-      player.play();
+      endingPlayer.play();
     }
 
     return (
       <View style={timeStyle as StyleProp<ViewStyle>}>
-        {isPlaying ? (
-          <View className="flex-row items-center justify-center flex-1 overflow-hidden">
-            <Animated.View
-              key={`${Math.floor(remainingTime / 60)}`}
-              entering={FadeInDown.duration(300)}
-              exiting={FadeOutUp.duration(300)}
-              layout={LinearTransition.springify()}
-            >
-              <Text className="w-32 text-center text-white text-7xl">
-                {pad(Math.floor(remainingTime / 60))}
-              </Text>
-            </Animated.View>
-            <Entypo className="-mx-2" name="dots-two-vertical" size={34} color="white" />
-            <Animated.View
-              key={`${Math.floor(remainingTime / 60)} + ${remainingTime % 60}`}
-              entering={FadeInDown.duration(300)}
-              exiting={FadeOutUp.duration(300)}
-              layout={LinearTransition.springify()}
-            >
-              <Text className="w-32 text-center text-white text-7xl">
-                {pad(remainingTime % 60)}
-              </Text>
-            </Animated.View>
-          </View>
+        {isCountdownEnabled && startInitialCountdown ? (
+          <InitialCountdown
+            onCountdownFinish={() => {
+              setStartInitialCountdown(false);
+              setIsStartCountdownFinished(true);
+              setIsPlaying(true);
+            }}
+          />
+        ) : isPlaying ? (
+          <Countdown remainingTime={remainingTime} />
         ) : (
           <Animated.View
             key="timepicker"
@@ -106,7 +93,7 @@ export default function TabOneScreen() {
               MaskedView={MaskedView}
               styles={{
                 theme: "dark",
-                backgroundColor: "transparent", // transparent fade-out
+                backgroundColor: "transparent",
                 pickerItem: {
                   fontSize: 42,
                 },
@@ -131,12 +118,23 @@ export default function TabOneScreen() {
     );
   };
 
-  const { width } = Dimensions.get("screen");
-
   return (
     <SafeAreaProvider>
       <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-        <View className="items-center justify-center flex-1">
+        <Pressable
+          className="items-end justify-end mt-5 mr-4"
+          onPress={() => {
+            setIsCountdownEnabled(_prev => !_prev);
+          }}
+        >
+          {isCountdownEnabled ? (
+            <MaterialCommunityIcons name="timer" size={42} color="white" />
+          ) : (
+            <MaterialCommunityIcons name="timer-off" size={42} color="white" />
+          )}
+        </Pressable>
+
+        <View className="items-center justify-center flex-1 -mt-5">
           <Timer
             key={restartKey}
             isPlaying
@@ -166,13 +164,24 @@ export default function TabOneScreen() {
             disabled={timerDuration ? false : true}
             onPress={() => {
               if (!isPlaying) {
-                setUserSetDuration(timerDuration);
+                if (isCountdownEnabled) {
+                  setStartInitialCountdown(true);
+                  setTimeout(() => {
+                    setUserSetDuration(timerDuration);
+                    setIsPlaying(true);
+                  }, 4000);
+                  setTimeout(() => {
+                    startPlayer.play();
+                  }, 3300);
+                } else {
+                  setUserSetDuration(timerDuration);
+                  setIsPlaying(true);
+                }
               } else {
                 setUserSetDuration(0);
+                setIsPlaying(false);
+                setRestartKey(Math.random());
               }
-
-              setIsPlaying(_isPlaying => !_isPlaying);
-              setRestartKey(Math.random());
             }}
           >
             {isPlaying ? (
