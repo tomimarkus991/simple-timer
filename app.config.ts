@@ -10,7 +10,7 @@ const getAppConfig = (): AppConfig => {
   const variant = process.env.EXPO_PUBLIC_APP_VARIANT ?? "production";
 
   const config: AppConfig = {
-    name: "Simple Timer",
+    name: "Timer",
     package: "com.tomimarkus991.simpletimer",
     scheme: "project-simpletimer",
   };
@@ -47,7 +47,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   splash: {
     image: "./assets/images/splash.png",
     resizeMode: "contain",
-    backgroundColor: "#1e1f1f",
+    backgroundColor: "#151514",
   },
   ios: {
     supportsTablet: true,
@@ -58,8 +58,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: "./assets/images/splash.png",
-      backgroundColor: "#1e1f1f",
+      foregroundImage: "./assets/images/icon.png",
+      backgroundColor: "#151514",
     },
     package: appConfig.package,
   },
