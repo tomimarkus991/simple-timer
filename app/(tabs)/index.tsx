@@ -15,6 +15,7 @@ import { InitialCountdown } from "../../src/components/InitialCountdown";
 import { P } from "../../src/components/P";
 import { Timer } from "../../src/components/timer/Timer";
 import { timeStyle } from "../../src/components/timer/utils";
+import Toast from "react-native-toast-message";
 
 const ending = require("../../assets/sounds/ending4s.mp3");
 const start = require("../../assets/sounds/start.mp3");
@@ -135,6 +136,14 @@ export default function TabOneScreen() {
         <View className="flex-row items-end justify-between mt-5 mx-7">
           <Pressable
             onPress={() => {
+              Toast.show({
+                type: "success",
+                text1: `Looping ${isLoopingEnabled ? "Disabled" : "Enabled"}`,
+                position: "top",
+                topOffset: 80,
+                visibilityTime: 1000,
+              });
+
               setIsLoopingEnabled(_prev => !_prev);
             }}
           >
@@ -146,6 +155,13 @@ export default function TabOneScreen() {
           </Pressable>
           <Pressable
             onPress={() => {
+              Toast.show({
+                type: "success",
+                text1: `Countdown ${isCountdownEnabled ? "Disabled" : "Enabled"}`,
+                position: "top",
+                topOffset: 80,
+                visibilityTime: 1000,
+              });
               setIsCountdownEnabled(_prev => !_prev);
             }}
           >

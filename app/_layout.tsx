@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
 import "react-native-reanimated";
 import "../global.css";
+import Toast, { BaseToast } from "react-native-toast-message";
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -63,6 +64,21 @@ function RootLayoutNav() {
           <Stack.Screen name="(tabs)/index" options={{ headerShown: false }} />
         </Stack>
       </GestureHandlerRootView>
+      <Toast
+        config={{
+          success: props => (
+            <BaseToast
+              {...props}
+              style={{ borderLeftColor: "green", backgroundColor: "#222221" }}
+              text1Style={{
+                fontSize: 20,
+                color: "#FFF",
+                fontFamily: "Rubik-SemiBold",
+              }}
+            />
+          ),
+        }}
+      />
     </>
   );
 }
