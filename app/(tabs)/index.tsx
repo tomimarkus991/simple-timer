@@ -42,7 +42,7 @@ export default function TabOneScreen() {
 
   const pickerFeedback = useCallback(() => {
     try {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     } catch {
       console.warn("Picker feedback failed");
     }
@@ -136,6 +136,8 @@ export default function TabOneScreen() {
         <View className="flex-row items-end justify-between mt-5 mx-7">
           <Pressable
             onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+
               Toast.show({
                 type: "success",
                 text1: `Looping ${isLoopingEnabled ? "Disabled" : "Enabled"}`,
@@ -155,6 +157,8 @@ export default function TabOneScreen() {
           </Pressable>
           <Pressable
             onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+
               Toast.show({
                 type: "success",
                 text1: `Countdown ${isCountdownEnabled ? "Disabled" : "Enabled"}`,
@@ -213,6 +217,8 @@ export default function TabOneScreen() {
             )}
             disabled={timerDuration ? false : true}
             onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+
               if (!isPlaying) {
                 const minutes = Math.floor(timerDuration / 60);
                 const seconds = timerDuration % 60;
