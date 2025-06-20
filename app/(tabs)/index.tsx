@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import Animated, { FadeInDown, FadeOutUp, LinearTransition } from "react-native-reanimated";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -32,6 +32,9 @@ export default function TabOneScreen() {
     0, 0, 0, 0,
   ]);
 
+  const lastUserSetDurationMinutesRef = useRef(0);
+  const lastUserSetDurationSecondsRef = useRef(0);
+
   const [restartKey, setRestartKey] = useState(Math.random());
   const endingPlayer = useAudioPlayer(ending);
   const startPlayer = useAudioPlayer(start);
@@ -56,6 +59,8 @@ export default function TabOneScreen() {
     if (remainingTime === 4) {
       endingPlayer.play();
     }
+
+    console.log(lastUserSetDurationSecondsRef.current);
 
     return (
       <View style={timeStyle as StyleProp<ViewStyle>}>
@@ -83,7 +88,13 @@ export default function TabOneScreen() {
               hideHours
               secondInterval={10}
               decelerationRate={0}
-              initialValue={{ minutes: 3 }}
+              initialValue={{
+                minutes:
+                  lastUserSetDurationSecondsRef.current === 0
+                    ? 3
+                    : lastUserSetDurationMinutesRef.current,
+                seconds: lastUserSetDurationSecondsRef.current || 0,
+              }}
               minuteLabel={<P className="pl-2 text-2xl font-bold text-center">m</P>}
               secondLabel={<P className="text-2xl font-bold text-center">s</P>}
               maximumMinutes={10}
@@ -164,10 +175,19 @@ export default function TabOneScreen() {
             disabled={timerDuration ? false : true}
             onPress={() => {
               if (!isPlaying) {
+                const minutes = Math.floor(timerDuration / 60);
+                const seconds = timerDuration % 60;
+
+                console.log(timerDuration, minutes, ":", seconds);
+
+                lastUserSetDurationMinutesRef.current = minutes;
+                lastUserSetDurationSecondsRef.current = seconds;
+
                 if (isCountdownEnabled) {
                   setStartInitialCountdown(true);
                   setTimeout(() => {
                     setUserSetDuration(timerDuration);
+
                     setIsPlaying(true);
                   }, 4000);
                   setTimeout(() => {
