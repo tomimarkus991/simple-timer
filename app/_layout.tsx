@@ -48,12 +48,12 @@ export default function RootLayout() {
     if (loaded) {
       SplashScreen.hideAsync();
 
-      setAudioModeAsync({
-        shouldPlayInBackground: true,
-        shouldRouteThroughEarpiece: true,
-        interruptionMode: "mixWithOthers",
-        interruptionModeAndroid: "duckOthers",
-      });
+      // setAudioModeAsync({
+      //   shouldPlayInBackground: true,
+      //   shouldRouteThroughEarpiece: true,
+      //   interruptionMode: "mixWithOthers",
+      //   interruptionModeAndroid: "duckOthers",
+      // });
     }
   }, [loaded]);
 
