@@ -13,7 +13,7 @@
     "test": "jest --watchAll",
     "doctor": "npx expo-doctor",
     "drizzle": "npx drizzle-kit generate",
-    "simpletimer:preview": "eas build --profile preview --platform android"
+    "app:preview": "eas build --profile preview --platform android"
   },
   "jest": {
     "preset": "jest-expo"
