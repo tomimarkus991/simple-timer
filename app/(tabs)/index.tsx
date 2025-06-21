@@ -24,7 +24,7 @@ Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowBanner: true,
     shouldShowList: true,
-    shouldPlaySound: false,
+    shouldPlaySound: true,
     shouldSetBadge: false,
   }),
 });
@@ -232,7 +232,7 @@ export default function TabOneScreen() {
                     title: `Timer finished at ${format(new Date(), "HH:mm")}`,
                     sticky: true,
                   },
-                  trigger: { channelId: "default" },
+                  trigger: null,
                 });
 
                 setRestartKey(Math.random());
