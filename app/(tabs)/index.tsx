@@ -2,23 +2,50 @@ import FontAwesome from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaskedView from "@react-native-masked-view/masked-view";
 import clsx from "clsx";
-import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, Pressable, StyleProp, View, ViewStyle } from "react-native";
+import { Dimensions, Platform, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import Animated, { FadeInDown, FadeOutUp, LinearTransition } from "react-native-reanimated";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { TimerPicker } from "react-native-timer-picker";
+import Toast from "react-native-toast-message";
 import { Countdown } from "../../src/components/Countdown";
 import { InitialCountdown } from "../../src/components/InitialCountdown";
 import { P } from "../../src/components/P";
 import { Timer } from "../../src/components/timer/Timer";
 import { timeStyle } from "../../src/components/timer/utils";
-import Toast from "react-native-toast-message";
 
-const ending = require("../../assets/sounds/ending4s.mp3");
-const start = require("../../assets/sounds/start.mp3");
+import * as Notifications from "expo-notifications";
+import { useGetMusic } from "../../src/hooks/useGetMusic";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+async function registerForPushNotificationsAsync() {
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+    });
+  }
+
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+  if (existingStatus !== "granted") {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+  if (finalStatus !== "granted") {
+    return;
+  }
+}
 
 export default function TabOneScreen() {
   const { width } = Dimensions.get("screen");
@@ -36,9 +63,10 @@ export default function TabOneScreen() {
   const lastUserSetDurationMinutesRef = useRef(0);
   const lastUserSetDurationSecondsRef = useRef(0);
 
+  const startPlayer = useGetMusic(require("../../assets/sounds/start.mp3"));
+  const endingPlayer = useGetMusic(require("../../assets/sounds/ending4s.mp3"));
+
   const [restartKey, setRestartKey] = useState(Math.random());
-  const endingPlayer = useAudioPlayer(ending);
-  const startPlayer = useAudioPlayer(start);
 
   const pickerFeedback = useCallback(() => {
     try {
@@ -50,14 +78,20 @@ export default function TabOneScreen() {
 
   useEffect(() => {
     const mainColor = userSetDuration * 0.7;
-    const secondColor = userSetDuration * 0.2;
-    const lastColor = userSetDuration * 0.08;
+    const secondColor = userSetDuration * 0.33;
+    const lastColor = userSetDuration * 0.17;
 
     setDynamicColors([mainColor, secondColor, lastColor, 0]);
   }, [userSetDuration]);
 
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+  }, []);
+
   const renderTime = ({ remainingTime }: any) => {
-    if (remainingTime === 4) {
+    if (typeof remainingTime !== "number") return null;
+
+    if (remainingTime === 4 && endingPlayer) {
       endingPlayer.seekTo(0);
       endingPlayer.play();
     }
@@ -88,10 +122,7 @@ export default function TabOneScreen() {
               secondInterval={10}
               decelerationRate={0}
               initialValue={{
-                minutes:
-                  lastUserSetDurationSecondsRef.current === 0
-                    ? 3
-                    : lastUserSetDurationMinutesRef.current,
+                minutes: lastUserSetDurationMinutesRef.current || 0,
                 seconds: lastUserSetDurationSecondsRef.current || 0,
               }}
               minuteLabel={<P className="pl-2 text-2xl font-bold text-center">m</P>}
@@ -214,10 +245,17 @@ export default function TabOneScreen() {
               "disabled:opacity-60"
             )}
             disabled={timerDuration ? false : true}
-            onPress={() => {
+            onPress={async () => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
 
               if (!isPlaying) {
+                await Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: `${timerDuration}`,
+                    sticky: true,
+                  },
+                  trigger: null,
+                });
                 const minutes = Math.floor(timerDuration / 60);
                 const seconds = timerDuration % 60;
 
@@ -232,8 +270,10 @@ export default function TabOneScreen() {
                     setIsPlaying(true);
                   }, 4000);
                   setTimeout(() => {
-                    startPlayer.seekTo(0);
-                    startPlayer.play();
+                    if (startPlayer) {
+                      startPlayer.seekTo(0);
+                      startPlayer.play();
+                    }
                   }, 3300);
                 } else {
                   setUserSetDuration(timerDuration);

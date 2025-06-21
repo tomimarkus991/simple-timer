@@ -69,6 +69,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     "expo-router",
+    ["expo-notifications"],
     [
       "expo-font",
       {
@@ -91,6 +92,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     ["expo-audio"],
+    [
+      "expo-asset",
+      {
+        assets: [
+          "./assets/sounds/start.mp3",
+          "./assets/sounds/ending2s.mp3",
+          "./assets/sounds/ending4s.mp3",
+        ],
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,
