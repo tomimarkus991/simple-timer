@@ -22,7 +22,7 @@ const getRGB = (color: string) =>
 const getStroke = (props: Props, remainingTime: number): ColorFormat => {
   const { colors, colorsTime, isSmoothColorTransition = true } = props;
   if (typeof colors === "string") {
-    return colors;
+    return colors as any;
   }
 
   const index =
@@ -66,7 +66,7 @@ export const useCountdown = (props: Props) => {
     onUpdate,
   } = props;
 
-  const remainingTimeRef = useRef<number>();
+  const remainingTimeRef = useRef<number>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const maxStrokeWidth = Math.max(strokeWidth, trailStrokeWidth ?? 0);
   const { path, pathLength } = getPathProps(size, maxStrokeWidth, rotation);

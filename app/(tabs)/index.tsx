@@ -80,8 +80,8 @@ export default function TabOneScreen() {
   }, []);
 
   useEffect(() => {
-    const mainColor = userSetDuration * 0.7;
-    const secondColor = userSetDuration * 0.33;
+    const mainColor = userSetDuration * 1;
+    const secondColor = userSetDuration * 0.5;
     const lastColor = userSetDuration * 0.17;
 
     setDynamicColors([mainColor, secondColor, lastColor, 0]);
@@ -218,7 +218,7 @@ export default function TabOneScreen() {
             colorsTime={dynamicColors}
             size={width - 20}
             strokeWidth={30}
-            trailColor={"#151D64"}
+            trailColor={"#2E2E2E"}
             strokeLinecap={"butt"}
             isSmoothColorTransition={false}
             updateInterval={1}

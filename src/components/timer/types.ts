@@ -16,14 +16,14 @@ type TimeProps = {
 
 type SingleColor = {
   /** Single valid color or url to a gradient */
-  colors: ColorFormat;
+  colors: any;
   /** Colors time works only when the colors prop is an array of colors*/
   colorsTime?: never;
 };
 
 type MultipleColors = {
   /** Array of colors in HEX format. At least 2 colors should be provided */
-  colors: { 0: ColorHex } & { 1: ColorHex } & ColorHex[];
+  colors: any;
   /** Indicates the time when a color should switch to the next color. The first item should be the duration and the last one should be 0/goal. Example with duration of 10 seconds: [10, 6, 3, 0]  */
   colorsTime: { 0: number } & { 1: number } & number[];
 };
