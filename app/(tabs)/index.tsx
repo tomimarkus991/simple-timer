@@ -15,6 +15,7 @@ import { InitialCountdown } from "../../src/components/InitialCountdown";
 import { P } from "../../src/components/P";
 import { Timer } from "../../src/components/timer/Timer";
 import { timeStyle } from "../../src/components/timer/utils";
+import { format } from "date-fns";
 
 import * as Notifications from "expo-notifications";
 import { useGetMusic } from "../../src/hooks/useGetMusic";
@@ -33,6 +34,8 @@ async function registerForPushNotificationsAsync() {
     Notifications.setNotificationChannelAsync("default", {
       name: "default",
       importance: Notifications.AndroidImportance.MAX,
+      bypassDnd: false,
+      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
     });
   }
 
@@ -224,6 +227,14 @@ export default function TabOneScreen() {
                 setRestartKey(Math.random());
                 return { shouldRepeat: true };
               } else {
+                Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: `Timer finished at ${format(new Date(), "HH:mm")}`,
+                    sticky: true,
+                  },
+                  trigger: { channelId: "default" },
+                });
+
                 setRestartKey(Math.random());
                 setUserSetDuration(0);
                 setIsPlaying(false);
@@ -249,13 +260,6 @@ export default function TabOneScreen() {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
 
               if (!isPlaying) {
-                await Notifications.scheduleNotificationAsync({
-                  content: {
-                    title: `${timerDuration}`,
-                    sticky: true,
-                  },
-                  trigger: null,
-                });
                 const minutes = Math.floor(timerDuration / 60);
                 const seconds = timerDuration % 60;
 
