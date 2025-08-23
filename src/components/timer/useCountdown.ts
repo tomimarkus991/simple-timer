@@ -27,7 +27,8 @@ const getStroke = (props: Props, remainingTime: number): ColorFormat => {
 
   const index =
     colorsTime?.findIndex(
-      (time, i) => time >= remainingTime && remainingTime >= colorsTime[i + 1]
+      (time, i) =>
+        i < colorsTime.length - 1 && time >= remainingTime && remainingTime >= colorsTime[i + 1]
     ) ?? -1;
 
   if (!colorsTime || index === -1) {

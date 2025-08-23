@@ -51,7 +51,8 @@ async function registerForPushNotificationsAsync() {
 }
 
 export default function TabOneScreen() {
-  const { width } = Dimensions.get("screen");
+  const { width: screenWidth } = Dimensions.get("screen");
+  const width = Math.min(screenWidth, 360);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [timerDuration, setTimerDuration] = useState(0);
@@ -282,6 +283,14 @@ export default function TabOneScreen() {
                 } else {
                   setUserSetDuration(timerDuration);
                   setIsPlaying(true);
+
+                  Notifications.scheduleNotificationAsync({
+                    content: {
+                      title: `Timer started at ${format(new Date(), "HH:mm")}`,
+                      sticky: true,
+                    },
+                    trigger: null,
+                  });
                 }
               } else {
                 setUserSetDuration(0);

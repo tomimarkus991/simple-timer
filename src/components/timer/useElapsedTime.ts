@@ -47,7 +47,7 @@ export const useElapsedTime = ({
   const totalElapsedTimeRef = useRef(startAt * -1000); // keep in milliseconds to avoid summing up floating point numbers
   const requestRef = useRef<MayBe<number>>(null);
   const previousTimeRef = useRef<MayBe<number>>(null);
-  const repeatTimeoutRef = useRef<MayBe<NodeJS.Timeout>>(null);
+  const repeatTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const loop = (time: number) => {
     const timeSec = time / 1000;
@@ -98,6 +98,7 @@ export const useElapsedTime = ({
       setDisplayTime(nextStartAt);
 
       if (isPlaying) {
+        if (requestRef.current) cancelAnimationFrame(requestRef.current);
         requestRef.current = requestAnimationFrame(loop);
       }
     },
@@ -117,13 +118,15 @@ export const useElapsedTime = ({
       } = onComplete?.(totalElapsedTimeRef.current / 1000) || {};
 
       if (shouldRepeat) {
+        if (repeatTimeoutRef.current) clearTimeout(repeatTimeoutRef.current);
         repeatTimeoutRef.current = setTimeout(() => reset(newStartAt), delay * 1000);
       }
     }
-  }, [displayTime, duration]);
+  }, [displayTime, duration, onUpdate, onComplete, reset]);
 
   useLayoutEffect(() => {
     if (isPlaying) {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
       requestRef.current = requestAnimationFrame(loop);
     }
 
