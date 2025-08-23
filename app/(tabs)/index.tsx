@@ -228,14 +228,6 @@ export default function TabOneScreen() {
                 setRestartKey(Math.random());
                 return { shouldRepeat: true };
               } else {
-                Notifications.scheduleNotificationAsync({
-                  content: {
-                    title: `Timer finished at ${format(new Date(), "HH:mm")}`,
-                    sticky: true,
-                  },
-                  trigger: null,
-                });
-
                 setRestartKey(Math.random());
                 setUserSetDuration(0);
                 setIsPlaying(false);
@@ -283,14 +275,6 @@ export default function TabOneScreen() {
                 } else {
                   setUserSetDuration(timerDuration);
                   setIsPlaying(true);
-
-                  Notifications.scheduleNotificationAsync({
-                    content: {
-                      title: `Timer started at ${format(new Date(), "HH:mm")}`,
-                      sticky: true,
-                    },
-                    trigger: null,
-                  });
                 }
               } else {
                 setUserSetDuration(0);
