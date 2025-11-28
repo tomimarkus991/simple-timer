@@ -68,13 +68,8 @@ export const useCountdown = (props: Props) => {
   } = props;
 
   const remainingTimeRef = useRef<number>(null);
-  const [elapsedTime, setElapsedTime] = useState(0);
   const maxStrokeWidth = Math.max(strokeWidth, trailStrokeWidth ?? 0);
   const { path, pathLength } = getPathProps(size, maxStrokeWidth, rotation);
-
-  useEffect(() => {
-    setElapsedTime(0);
-  }, [key]);
 
   const { elapsedTime: newElapsedTime } = useElapsedTime({
     isPlaying,

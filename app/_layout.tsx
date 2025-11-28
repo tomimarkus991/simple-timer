@@ -50,9 +50,9 @@ export default function RootLayout() {
 
       setAudioModeAsync({
         shouldPlayInBackground: true,
-        shouldRouteThroughEarpiece: true,
-        interruptionMode: "mixWithOthers",
+        shouldRouteThroughEarpiece: false,
         interruptionModeAndroid: "duckOthers",
+        interruptionMode: "mixWithOthers",
       });
     }
   }, [loaded]);

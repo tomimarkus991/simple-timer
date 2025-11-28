@@ -18,7 +18,10 @@ import { timeStyle } from "../../src/components/timer/utils";
 import { format } from "date-fns";
 
 import * as Notifications from "expo-notifications";
-import { useGetMusic } from "../../src/hooks/useGetMusic";
+import { useAudioPlayer } from "expo-audio";
+
+const startSource = require("../../assets/sounds/start.mp3");
+const endSource = require("../../assets/sounds/ending2s.mp3");
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -66,9 +69,8 @@ export default function TabOneScreen() {
 
   const lastUserSetDurationMinutesRef = useRef(0);
   const lastUserSetDurationSecondsRef = useRef(0);
-
-  const startPlayer = useGetMusic(require("../../assets/sounds/start.mp3"));
-  const endingPlayer = useGetMusic(require("../../assets/sounds/ending4s.mp3"));
+  const startPlayer = useAudioPlayer(startSource);
+  const endingPlayer = useAudioPlayer(endSource);
 
   const [restartKey, setRestartKey] = useState(Math.random());
 
@@ -95,7 +97,8 @@ export default function TabOneScreen() {
   const renderTime = ({ remainingTime }: any) => {
     if (typeof remainingTime !== "number") return null;
 
-    if (remainingTime === 4 && endingPlayer) {
+    if (remainingTime === 2 && endingPlayer) {
+      endingPlayer.volume = 0.5;
       endingPlayer.seekTo(0);
       endingPlayer.play();
     }
@@ -110,7 +113,9 @@ export default function TabOneScreen() {
             }}
           />
         ) : isPlaying ? (
-          <Countdown remainingTime={remainingTime} />
+          <>
+            <Countdown remainingTime={remainingTime} />
+          </>
         ) : (
           <Animated.View
             key="timepicker"
@@ -222,7 +227,7 @@ export default function TabOneScreen() {
             trailColor={"#2E2E2E"}
             strokeLinecap={"butt"}
             isSmoothColorTransition={false}
-            updateInterval={1}
+            updateInterval={0}
             onComplete={() => {
               if (isLoopingEnabled) {
                 setRestartKey(Math.random());
